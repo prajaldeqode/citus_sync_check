@@ -51,10 +51,10 @@ def job():
                 difference=calculate_difference(vids1=citus_vids,vids2=graphnode_arbitrum_vids)
             )
         except Exception as e:
-            send_log_to_loki(log_message=e,labels={"job":"symmetric-ds","table_name":table})
+            send_log_to_loki(log_message=e,labels={"job":"symmetric-ds","table_name":table["table"]})
 
 # Schedule the job every 5 minutes
-schedule.every(1).minutes.do(job)
+schedule.every(5).minutes.do(job)
 
 def main():
     job()  # Run the job immediately on startup
