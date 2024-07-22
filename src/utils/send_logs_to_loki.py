@@ -30,7 +30,6 @@ def send_log_to_loki(log_message: str, labels: dict, timestamp=None):
 
 
     response = requests.post(loki_push_url, headers=headers, json=log_entry)
-    print("loki-logs",log_entry)
 
     if response.status_code != 204:
         print(f"Failed to send log to Loki: {response.status_code} {response.text}")
