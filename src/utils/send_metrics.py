@@ -13,4 +13,4 @@ fetch_feature_duration_ms = Gauge(
 
 def expose_difference_in_vid(table_name: str, difference: int):
     fetch_feature_duration_ms.labels(table_name=table_name).set(difference)
-    push_to_gateway(push_gateway_url, "symmetric-ds", registry=registry)
+    push_to_gateway(push_gateway_url, "symmetric-ds-sync", registry=registry)
