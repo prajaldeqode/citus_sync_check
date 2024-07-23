@@ -36,14 +36,18 @@ def fetch_data(fetchFor, db_config, table, column):
     connection = citus_connection if fetchFor == "citus" else graphnode_connection
     for itr in range(3):
         try:
+            if(connection.closed):
+                raise Exception(f"Connection is closed for {fetchFor}")
             query = f"SELECT {column} FROM {table} order by {column} desc limit 1"
             cursor = connection.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
             return result[0][0]
         except Exception as e:
-            if(itr == 2):
+            if(itr == 2 or str(e) != f"Connection is closed for {fetchFor}"):
                 raise e
+            print(e)
+            print(f"connection reset for {fetchFor}")
             if(fetchFor == "citus"):
                 citus_connection = createConnection(db_config=db_config)
                 connection = citus_connection
@@ -72,7 +76,7 @@ def job():
             print(e)
 
 # Schedule the job every 5 minutes
-schedule.every(5).minutes.do(job)
+schedule.every(2).minutes.do(job)
 
 def main():
     job()  # Run the job immediately on startup
