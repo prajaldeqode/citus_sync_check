@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 from utils.tables import tables
 from utils.send_metrics import expose_difference_in_vid
-from utils.send_logs_to_loki import send_log_to_loki
-
 # Database connection details
 citus_config = {
     'host': os.environ.get("CITUS_HOST"),
@@ -32,6 +30,7 @@ def fetch_vids(db_config, table, column):
     cursor.execute(query)
     result = cursor.fetchall()
     connection.close()
+    print(result)
     return [row[0] for row in result]
 
 def calculate_difference(vids1, vids2):
@@ -53,7 +52,6 @@ def job():
             )
         except Exception as e:
             print(e)
-            send_log_to_loki(log_message=e,labels={"job":"symmetric-ds-sync","table_name":table["table"]})
 
 # Schedule the job every 5 minutes
 schedule.every(5).minutes.do(job)
