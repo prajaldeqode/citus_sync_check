@@ -42,6 +42,7 @@ def job():
         try:
             citus_vids = fetch_vids(db_config=citus_config, table=table["table"], column=table["column"])
             graphnode_arbitrum_vids = fetch_vids(db_config=graphnode_arbitrum_config, table=table["table"], column=table["column"])
+            print(table["table"],citus_vids,graphnode_arbitrum_vids)
             if(type(citus_vids) != list):
                 raise Exception(f"Data is not fetched from {table['table']} table in citus database")
             if(type(graphnode_arbitrum_vids) != list):
@@ -51,6 +52,7 @@ def job():
                 difference=calculate_difference(vids1=citus_vids,vids2=graphnode_arbitrum_vids)
             )
         except Exception as e:
+            print(e)
             send_log_to_loki(log_message=e,labels={"job":"symmetric-ds-sync","table_name":table["table"]})
 
 # Schedule the job every 5 minutes
