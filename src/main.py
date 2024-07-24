@@ -27,8 +27,8 @@ def createConnection(db_config):
     connection = psycopg2.connect(**db_config)
     return connection
 
-citus_connection = createConnection(citus_config)
-graphnode_connection = createConnection(graphnode_arbitrum_config)
+global citus_connection
+global graphnode_connection
 
 def fetch_data(fetchFor, db_config, table, column):
     global citus_connection
@@ -75,10 +75,14 @@ def job():
         except Exception as e:
             print(e)
 
-# Schedule the job every 5 minutes
+# Schedule the job every 2 minutes
 schedule.every(2).minutes.do(job)
 
 def main():
+    global graphnode_connection
+    global citus_connection
+    citus_connection= createConnection(citus_config)
+    graphnode_connection = createConnection(graphnode_arbitrum_config)
     job()  # Run the job immediately on startup
     while True:
         schedule.run_pending()
